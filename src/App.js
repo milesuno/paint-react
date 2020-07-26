@@ -12,11 +12,12 @@ import Paint from "./components/paint/paint";
 function App() {
 	return (
 		<div className="App">
-<main>
-
-			<Paint />
-</main>
-
+			<div className="page-wrapper">
+				<main>
+					<h1>Paint App</h1>
+					<Paint />
+				</main>
+			</div>
 		</div>
 	);
 }
