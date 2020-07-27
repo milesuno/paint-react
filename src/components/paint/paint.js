@@ -11,6 +11,7 @@ class Paint extends Component {
 			lastX: 0,
 			lastY: 0,
 			hue: 0,
+			hsl: "",
 			colourChange: false,
 			lineCap: "round",
 			lineWidth: 50,
@@ -22,47 +23,111 @@ class Paint extends Component {
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
 
-		canvas.addEventListener("pointermove", this.draw);
-		canvas.addEventListener("pointerdown", () =>
+		canvas.addEventListener("touchmove", this.eventTypeRouter);
+		canvas.addEventListener("mousemove", this.eventTypeRouter);
+
+		canvas.addEventListener("touchstart", () =>
 			this.setState({ isDrawing: true })
 		);
-		canvas.addEventListener("pointerup", () =>
+		canvas.addEventListener("mousedown", () =>
+			this.setState({ isDrawing: true })
+		);
+		canvas.addEventListener("touchend", () =>
 			this.setState({ isDrawing: false })
 		);
-		canvas.addEventListener("pointerout", () =>
+		canvas.addEventListener("mouseup", () =>
+			this.setState({ isDrawing: false })
+		);
+
+		canvas.addEventListener("touchcancel", () =>
+			this.setState({ isDrawing: false })
+		);
+		canvas.addEventListener("mouselout", () =>
 			this.setState({ isDrawing: false })
 		);
 	}
-
-	draw = (event) => {
+	eventTypeRouter = (event) => {
 		if (!this.state.isDrawing) return;
+		if (event.type === "touchmove") {
+			let touches = [...event.changedTouches];
+			let offsetY = 100;
+			//TODO: Create lastX/Y state depending on the number of touch input
+			//TODO: remove extra coords once touch inputs reduce
+			console.log({ touches });
+			if (touches.length === 1) {
+				let coordsX = touches[0].clientX;
+				let coordsY = touches[0].clientY - offsetY;
 
-		if (!this.colourChange) {
-			this.setState({
-				lastX: event.offsetX,
-				lastY: event.offsetY,
-				hue: this.state.hue + 1,
-			});
+				this.setState({
+					lastX: coordsX,
+					lastY: coordsY,
+					hue: this.state.hue + 1,
+				});
+				this.draw(coordsX, coordsY);
+			}
+			if (touches.length > 1) {
+				for (let i = 2; i <= touches.length; i++) {
+					touches.forEach((touch) => {
+						let coordsX = touch.clientX;
+						let coordsY = touch.clientY - offsetY;
+						console.log({ touch, i });
+						this.createTouchCoords(touch, i);
+						this.draw(coordsX, coordsY);
+					});
+				}
+			}
 		}
 
+		if (event.type === "mousemove") {
+			let coordsX = event.offsetX;
+			let coordsY = event.offsetY;
+			console.dir(event);
+
+			this.setState({
+				lastX: coordsX,
+				lastY: coordsY,
+			});
+			if (!this.state.colourChange)
+				this.setState({
+					lastX: coordsX,
+					lastY: coordsY,
+					hue: this.state.hue + 1,
+				});
+			this.draw(coordsX, coordsY);
+		}
+	};
+	draw = (coordsX, coordsY) => {
 		let canvas = document.querySelector("#draw");
 		let context = canvas.getContext("2d");
 
 		context.lineJoin = "round";
 		context.lineCap = this.state.lineCap;
 		context.lineWidth = this.state.lineWidth;
-		context.strokeStyle = `hsl(${this.state.hue}, 60%, 60%)`;
+		context.strokeStyle =
+			this.state.hsl || `hsl(${this.state.hue}, 60%, 60%)`;
 
 		context.beginPath();
 		context.moveTo(this.state.lastX, this.state.lastY);
-		context.lineTo(event.offsetX, event.offsetY);
+		context.lineTo(coordsX, coordsY);
 		context.stroke();
 	};
+
+	createTouchCoords = (touch, i) => {
+		let touchX = `lastX${i}`;
+		let touchY = `lastY${i}`;
+		this.setState({
+			[touchX]: touch.clientX,
+			[touchY]: touch.clientY,
+		});
+		console.log(this.state);
+	};
+
 	setStrokeCap = (e) => {
 		let lineCap = e.target.value;
 		console.log(e.target.value);
 		this.setState({ lineCap });
 	};
+	
 	setStrokeSize = (e) => {
 		let lineWidth = e.target.value;
 		//line is number is px size
@@ -71,10 +136,10 @@ class Paint extends Component {
 	};
 
 	setColour = (e) => {
-		let hue = hexToHsl(e.target.value);
+		let hsl = hexToHsl(e.target.value);
 		console.log(hexToHsl(e.target.value));
-		// console.log(this.state.hue)
-		this.setState({ hue, colourChange: true });
+		console.log({ hsl });
+		this.setState({ hsl, colourChange: true });
 	};
 	render() {
 		return (

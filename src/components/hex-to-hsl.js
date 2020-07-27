@@ -40,6 +40,5 @@ export default function hexToHSL(H) {
     s = +(s * 100).toFixed(1);
     l = +(l * 100).toFixed(1);
 
-    // return "hsl(" + h + "," + s + "%," + l + "%)";
-    return h;
+    return "hsl(" + h + "," + s + "%," + l + "%)";
 }

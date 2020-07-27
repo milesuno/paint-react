@@ -1,5 +1,6 @@
 .App {
-	text-align: center;
+  text-align: center;
+  overflow: hidden;
 }
 
 .App-logo {
@@ -52,7 +53,7 @@
 	width: 70%;
 } */
 
-/* canvas {
+canvas {
 	height: 100%;
 	width: 100%;
-} */
+}
