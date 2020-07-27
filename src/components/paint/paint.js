@@ -72,7 +72,7 @@ class Paint extends Component {
 						let coordsY = touch.clientY - offsetY;
 						console.log({ touch, i });
 						this.createTouchCoords(touch, i);
-						this.draw(coordsX, coordsY);
+						// this.draw(coordsX, coordsY);
 					});
 				}
 			}
@@ -87,6 +87,7 @@ class Paint extends Component {
 				lastX: coordsX,
 				lastY: coordsY,
 			});
+
 			if (!this.state.colourChange)
 				this.setState({
 					lastX: coordsX,
@@ -96,6 +97,8 @@ class Paint extends Component {
 			this.draw(coordsX, coordsY);
 		}
 	};
+
+
 	draw = (coordsX, coordsY) => {
 		let canvas = document.querySelector("#draw");
 		let context = canvas.getContext("2d");
@@ -127,7 +130,7 @@ class Paint extends Component {
 		console.log(e.target.value);
 		this.setState({ lineCap });
 	};
-	
+
 	setStrokeSize = (e) => {
 		let lineWidth = e.target.value;
 		//line is number is px size
