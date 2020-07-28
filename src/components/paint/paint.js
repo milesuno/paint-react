@@ -46,6 +46,7 @@ class Paint extends Component {
 			this.setState({ isDrawing: false })
 		);
 	}
+
 	eventTypeRouter = (event) => {
 		if (!this.state.isDrawing) return;
 		if (event.type === "touchmove") {
@@ -65,13 +66,14 @@ class Paint extends Component {
 				});
 				this.draw(coordsX, coordsY);
 			}
+
 			if (touches.length > 1) {
 				for (let i = 2; i <= touches.length; i++) {
 					touches.forEach((touch) => {
 						let coordsX = touch.clientX;
 						let coordsY = touch.clientY - offsetY;
 						console.log({ touch, i });
-						this.createTouchCoords(touch, i);
+						this.createMultipleTouchCoords(touch, i);
 						// this.draw(coordsX, coordsY);
 					});
 				}
@@ -98,7 +100,6 @@ class Paint extends Component {
 		}
 	};
 
-
 	draw = (coordsX, coordsY) => {
 		let canvas = document.querySelector("#draw");
 		let context = canvas.getContext("2d");
@@ -115,7 +116,7 @@ class Paint extends Component {
 		context.stroke();
 	};
 
-	createTouchCoords = (touch, i) => {
+	createMultipleTouchCoords = (touch, i) => {
 		let touchX = `lastX${i}`;
 		let touchY = `lastY${i}`;
 		this.setState({
@@ -144,6 +145,14 @@ class Paint extends Component {
 		console.log({ hsl });
 		this.setState({ hsl, colourChange: true });
 	};
+
+	clearCanvas = () => {
+		let canvas = document.querySelector("#draw");
+		console.dir(canvas);
+		let context = canvas.getContext("2d");
+		context.clearRect(0, 0, canvas.width, canvas.height);
+	};
+	
 	render() {
 		return (
 			<>
@@ -151,6 +160,7 @@ class Paint extends Component {
 					setStrokeCap={this.setStrokeCap}
 					setStrokeSize={this.setStrokeSize}
 					setColour={this.setColour}
+					clearCanvas={this.clearCanvas}
 				/>
 				<canvas id="draw" width="800" height="800"></canvas>
 				<script src="index.js"></script>

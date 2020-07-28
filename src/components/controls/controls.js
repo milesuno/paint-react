@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import "./controls.css";
 
 class Controls extends Component {
 	constructor(props) {
@@ -30,6 +31,7 @@ class Controls extends Component {
 					Colour Picker
 					<input type="color" onChange={this.props.setColour}></input>
 				</label>
+                <label><button onClick={this.props.clearCanvas}>Clear Canvas</button></label>
 			</div>
 		);
 	}
